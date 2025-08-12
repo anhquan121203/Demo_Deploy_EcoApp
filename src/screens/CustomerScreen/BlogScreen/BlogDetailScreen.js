@@ -46,8 +46,7 @@ export default function BlogDetailScreen() {
     ? selectedBlog.blogImages
     : []; // đảm bảo là mảng
   const hasImages = blogImages.length > 0;
-  const fallbackImage =
-    "https://www.elegantthemes.com/blog/wp-content/uploads/2020/02/000-404.png";
+  const fallbackImage = require("../../../../assets/image_default.jpg"); // hình ảnh mặc định nếu không có hình
 
   const handleAddComment = async () => {
     if (!commentContent.trim()) return;
@@ -84,7 +83,7 @@ export default function BlogDetailScreen() {
         >
           {/* --- phần header Image --- */}
           <ImageBackground
-            source={{ uri: hasImages ? blogImages[0] : fallbackImage }}
+            source={hasImages ? { uri: blogImages[0] } : fallbackImage}
             style={styles.imageBackground}
             imageStyle={{
               borderBottomLeftRadius: 20,
@@ -105,9 +104,7 @@ export default function BlogDetailScreen() {
               <Text style={styles.title}>{selectedBlog.title}</Text>
               <View style={styles.authorRow}>
                 <Image
-                  source={{
-                    uri: "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740",
-                  }}
+                  source={require("../../../../assets/chatbot.png")} // hình ảnh mặc định
                   style={styles.avatar}
                 />
                 <Text style={styles.authorText}>
@@ -125,19 +122,21 @@ export default function BlogDetailScreen() {
               1. {selectedBlog.destinationName}
             </Text>
 
-            {blogImages.slice(1).map((img, index) => (
-              <Image
-                key={index}
-                source={{ uri: img }}
-                style={{
-                  width: "100%",
-                  height: 200,
-                  borderRadius: 12,
-                  marginTop: 10,
-                }}
-                resizeMode="cover"
-              />
-            ))}
+            {blogImages.slice(1).map((img, index) =>
+              img ? (
+                <Image
+                  key={index}
+                  source={{ uri: img }}
+                  style={{
+                    width: "100%",
+                    height: 200,
+                    borderRadius: 12,
+                    marginTop: 10,
+                  }}
+                  resizeMode="cover"
+                />
+              ) : null
+            )}
           </View>
 
           {/* --- phần bình luận --- */}
@@ -148,9 +147,7 @@ export default function BlogDetailScreen() {
               selectedComment.map((item, index) => (
                 <View style={styles.commentItem} key={index}>
                   <Image
-                    source={{
-                      uri: "https://img.freepik.com/free-icon/user_318-159711.jpg",
-                    }}
+                    source={require("../../../../assets/chatbot.png")} // hình ảnh mặc định
                     style={styles.commentAvatar}
                   />
                   <View style={styles.commentContent}>

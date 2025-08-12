@@ -115,9 +115,7 @@ export default function TripHistoryScreen() {
                 >
                   <View style={styles.tripCard} key={index}>
                     <Image
-                      source={{
-                        uri: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/4f/7d/fc/caption.jpg?w=1200&h=-1&s=1",
-                      }}
+                      source={require("../../../../assets/images/trips/bg-trip.png")}
                       style={styles.tripImage}
                     />
                     <View style={styles.tripInfo}>
@@ -128,7 +126,7 @@ export default function TripHistoryScreen() {
                           size={14}
                           color="#2196F3"
                         />
-                        <Text style={styles.locationText}>Thailand</Text>
+                        <Text style={styles.locationText}>Viet Nam</Text>
                       </View>
                       <Text style={styles.dateText}>
                         {item.startDate} - {item.endDate}
