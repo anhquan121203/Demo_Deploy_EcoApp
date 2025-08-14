@@ -13,6 +13,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import TripScheduleDetailModal from "./TripScheduleDetailModal";
 import usePayment from "../../../hooks/usePayment";
 import Toast from "react-native-toast-message";
+import useAuth from "../../../hooks/useAuth";
 
 export default function TripDetailScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -21,6 +22,9 @@ export default function TripDetailScreen() {
   const { selectedTrip, tripById } = useTrip();
   const navigation = useNavigation();
   const { payments, addNewPayment } = usePayment();
+  const { addNewtripScheduleWithAI } = useTrip();
+
+  const { userType } = useAuth();
 
   useEffect(() => {
     if (id) {
@@ -46,6 +50,7 @@ export default function TripDetailScreen() {
 
       if (result.success) {
         const checkoutUrl = result.data?.response?.checkoutUrl;
+        console.log("Checkout payment URL:", checkoutUrl);
 
         if (checkoutUrl) {
           Toast.show({
@@ -79,27 +84,61 @@ export default function TripDetailScreen() {
     }
   };
 
+  // create trip withh AI
+
+  const handleCreateTripWithAI = async () => {
+    try {
+      const payload = {
+        tripId: selectedTrip.tripId,
+      };
+
+      const res = await addNewtripScheduleWithAI(payload);
+      Toast.show({
+        type: "success",
+        text1: "Thành công!",
+        text2: `Lịch trình đã được tạo!`,
+      });
+      // console.log("Thông tin lích trình:", payload);
+
+      navigation.navigate("TripScheduleAi", {
+        aiData: res,
+        tripId: selectedTrip.tripId,
+      });
+    } catch (error) {}
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={{ paddingBottom: 120 }}
       >
-        <ImageBackground
-          source={require("../../../../assets/images/trips/image_trip_detail.jpg")}
-          style={styles.headerImage}
-          imageStyle={{
-            borderBottomLeftRadius: 20,
-            borderBottomRightRadius: 20,
-          }}
-        >
-          <View style={styles.overlay}>
-            <Text style={styles.tripName}>{selectedTrip.tripName}</Text>
-            <Text style={styles.userName}>
-              Người tạo: {selectedTrip.firstName} {selectedTrip.lastName}
-            </Text>
-          </View>
-        </ImageBackground>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() =>
+              navigation.navigate("Tabs", { screen: "TripHistory" })
+            }
+          >
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
+
+          <ImageBackground
+            source={require("../../../../assets/images/trips/image_trip_detail.jpg")}
+            style={styles.headerImage}
+            imageStyle={{
+              borderBottomLeftRadius: 20,
+              borderBottomRightRadius: 20,
+            }}
+          >
+            <View style={styles.overlay}>
+              <Text style={styles.tripName}>{selectedTrip.tripName}</Text>
+              <Text style={styles.userName}>
+                Người tạo: {selectedTrip.firstName} {selectedTrip.lastName}
+              </Text>
+            </View>
+          </ImageBackground>
+        </View>
 
         <View style={styles.detailContainer}>
           <View style={styles.card}>
@@ -168,6 +207,7 @@ export default function TripDetailScreen() {
 
       {/* Nút cố định dưới cùng */}
       <View style={styles.fixedBottomButtons}>
+        {/* navigate towis trang TripScheduleScreen */}
         <TouchableOpacity
           style={styles.leftButton}
           onPress={() =>
@@ -178,13 +218,40 @@ export default function TripDetailScreen() {
           <Text style={styles.buttonText}>Tạo lịch</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.middleButton}
-          
-        >
-          <Ionicons name="sparkles-outline" size={18} color="#fff" style={{marginRight: 8}}/>
-          <Text style={styles.buttonText}>Tạo AI</Text>
-        </TouchableOpacity>
+        {/* BUTTON AI */}
+        {userType === "1" || userType === "Basic" ? (
+          <TouchableOpacity
+            style={styles.middleButton}
+            onPress={() => {
+              Toast.show({
+                type: "info",
+                text1: "Tài khoản chưa nâng cấp",
+                text2: "Vui lòng nâng cấp lên Premier để sử dụng tính năng này",
+              });
+            }}
+          >
+            <Ionicons
+              name="sparkles-outline"
+              size={18}
+              color="#fff"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.buttonText}>Tạo AI</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.middleButton}
+            onPress={handleCreateTripWithAI}
+          >
+            <Ionicons
+              name="sparkles-outline"
+              size={18}
+              color="#fff"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.buttonText}>Tạo AI</Text>
+          </TouchableOpacity>
+        )}
 
         <TouchableOpacity style={styles.rightButton} onPress={handlePayment}>
           <Text style={styles.paymentText}>Thanh toán</Text>
@@ -197,6 +264,15 @@ export default function TripDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#f8f9fc",
+  },
+  backButton: {
+    position: "absolute",
+    top: 45,
+    left: 20,
+    backgroundColor: "rgba(0, 0, 0 , 0.3)",
+    borderRadius: 50,
+    padding: 5,
+    zIndex: 100,
   },
   headerImage: {
     height: 270,
@@ -306,10 +382,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 10,
   },
-  
+
   rightButton: {
     flex: 1.2,
-    backgroundColor: "#e74c3c",
+    backgroundColor: "red",
     padding: 12,
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,

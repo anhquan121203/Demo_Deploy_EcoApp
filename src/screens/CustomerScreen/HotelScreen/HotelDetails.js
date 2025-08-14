@@ -56,7 +56,7 @@ const HotelDetails = () => {
     );
   }
 
-  const fallbackImage = require("../../../../assets/image_default.jpg");
+  const fallbackImage = "https://via.placeholder.com/300x200.png?text=No+Image";
   const hotelImages = selectedHotel.hotelImages?.length
     ? selectedHotel.hotelImages
     : [fallbackImage];
@@ -82,7 +82,7 @@ const HotelDetails = () => {
             {hotelImages.map((img, index) => (
               <Image
                 key={index}
-                source={typeof img === "string" ? { uri: img } : img}
+                source={{ uri: img }}
                 style={styles.image}
                 resizeMode="cover"
               />

@@ -14,13 +14,13 @@ import useHotel from "../../hooks/useHotel";
 import useLocation from "../../hooks/useLocation";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import useDestination from "../../hooks/useDestination";
-import imageAttrac from "../../../assets/images/home/ho-guom.jpg";
 
 const HomeScreen = () => {
   const { attractions, loading, error, fetchAttractions } = useAttraction();
   const { addressNow } = useLocation();
   const { hotels, fetchHotels } = useHotel();
   const { destinations, fetchDestinations } = useDestination();
+
 
   const navigation = useNavigation();
 
@@ -99,8 +99,8 @@ const HomeScreen = () => {
             attractions.map((item, index) => {
               const imageUrl =
                 item.attractionImages?.length > 0
-                  ? { uri: String(item.attractionImages[0]) }
-                  : require("../../../assets/images/home/ho-guom.jpg");
+                  ? item.attractionImages[0]
+                  : "https://static.vinwonders.com/production/ho-hoan-kiem-2.jpg";
 
               return (
                 <TouchableOpacity
@@ -108,7 +108,10 @@ const HomeScreen = () => {
                   onPress={() => handleAttractionDetails(item.attractionId)}
                 >
                   <View key={index} style={styles.card}>
-                    <Image source={imageUrl} style={styles.cardImage} />
+                    <Image
+                      source={{ uri: imageUrl }}
+                      style={styles.cardImage}
+                    />
                     <Text style={styles.cardTitle}>{item.attractionName}</Text>
                     <Text style={styles.cardSubtitle}>
                       {item.attractionType} mỗi người
@@ -147,8 +150,8 @@ const HomeScreen = () => {
             hotels.map((item, index) => {
               const imageUrl =
                 item.hotelImages?.length > 0
-                  ? { uri: String(item.hotelImages[0]) }
-                  : require("../../../assets/image_default.jpg");
+                  ? item.hotelImages[0]
+                  : "https://via.placeholder.com/160x100.png?text=No+Image";
 
               return (
                 <TouchableOpacity
@@ -156,7 +159,10 @@ const HomeScreen = () => {
                   onPress={() => handleHotelDetails(item.hotelId)}
                 >
                   <View key={index} style={styles.card}>
-                    <Image source={imageUrl} style={styles.cardImage} />
+                    <Image
+                      source={{ uri: imageUrl }}
+                      style={styles.cardImage}
+                    />
                     <Text style={styles.cardTitle}>{item.name}</Text>
                     <Text style={styles.cardSubtitle}>
                       {item.addressLine} mỗi người
@@ -184,12 +190,12 @@ const HomeScreen = () => {
           destinations.slice(0, 5).map((item, index) => {
             const imageUrl =
               item.destinationImages?.length > 0
-                ? { uri: String(item.destinationImages[0]) }
-                : require("../../../assets/image_default.jpg");
+                ? item.destinationImages[0]
+                : "https://via.placeholder.com/120x100.png?text=No+Image";
 
             return (
               <TouchableOpacity style={styles.exploreCard} key={index}>
-                <Image source={imageUrl} style={styles.exploreImage} />
+                <Image source={{ uri: imageUrl }} style={styles.exploreImage} />
                 <View style={styles.exploreInfo}>
                   <Text style={styles.exploreTitle}>{item.name}</Text>
                   <Text style={styles.exploreSubtitle}>

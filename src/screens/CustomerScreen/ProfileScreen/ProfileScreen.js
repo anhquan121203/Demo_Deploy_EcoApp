@@ -17,7 +17,7 @@ import useAuth from "../../../hooks/useAuth";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
-  const {firstName, lastName, avatar, email} = useAuth();
+  const {firstName, lastName, avatar, email, userType} = useAuth();
 
   const dispatch = useDispatch();
 
@@ -27,6 +27,15 @@ const ProfileScreen = () => {
     await AsyncStorage.removeItem("refresh_token");
     dispatch(logout()); 
   };
+
+  const renderType = (userType) =>  {
+    switch (userType) {
+      case "1":
+        return "Miễn phí";
+      default:
+        return "Nâng cao";
+    }
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -43,11 +52,14 @@ const ProfileScreen = () => {
           <Icon name="more-vert" size={24} color="#fff" />
         </TouchableOpacity>
         <Image
-          source={require("../../../../assets/chatbot.png")} // Replace with your avatar URL
+          source={{
+            uri: "https://cdn.dribbble.com/userupload/14028171/file/original-3a31127b9b84f9bc5f75737a4720f699.jpg?resize=752x&vertical=center",
+          }} // Replace with your avatar URL
           style={styles.avatar}
         />
         <Text style={styles.name}>{firstName} {lastName}</Text>
         <Text style={styles.phone}>{email}</Text>
+        <Text style={styles.phone}>{renderType(userType)}</Text>
       </View>
       {/* </ImageBackground> */}
 
@@ -82,10 +94,10 @@ const ProfileScreen = () => {
 
         <TouchableOpacity
           style={styles.infoItem}
-          onPress={() => navigation.navigate("TripHistory")}
+          onPress={() => navigation.navigate("PaymentHistory")}
         >
-          <Icon name="schedule" size={24} color="#2a9df4" />
-          <Text style={styles.infoText}>Lịch trình chuyến đi</Text>
+          <Icon name="payment" size={24} color="#2a9df4" />
+          <Text style={styles.infoText}>Lịch sử thanh toán</Text>
           <Icon
             name="chevron-right"
             size={24}
